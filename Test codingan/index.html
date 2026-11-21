@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Ulang Tahun, Sayangku</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cormorant Garamond (puitis/serif) & Plus Jakarta Sans (modern/clean) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        cream: '#FDF8F5',
+                        peach: '#FADCD9',
+                        dusty: '#D88C9A',
+                        roseDeep: '#A65E6E',
+                        goldSoft: '#D4A373',
+                        ink: '#4A353B'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'flicker': 'flicker 1.5s infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': {transform: 'translateY(0px)'},
+                            '50%': {transform: 'translateY(-10px)'},
+                        },
+                        flicker: {
+                            '0%': {transform: 'scale(1) rotate(-2deg)', opacity: '0.95'},
+                            '50%': {transform: 'scale(1.08) rotate(2deg)', opacity: '1'},
+                            '100%': {transform: 'scale(0.96) rotate(-1deg)', opacity: '0.9'},
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Kustomisasi Scrollbar & Dasar Tampilan */
+        body {
+            background: linear-gradient(135deg, #FDF8F5 0%, #FADCD9 45%, #F2C6CE 100%);
+            color: #4A353B;
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.62);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 20px 50px rgba(166, 94, 110, 0.14),
+                0 4px 15px rgba(212, 163, 115, 0.08);
+        }
+
+        /* Transisi Smooth Halaman */
+        .page-transition {
+            transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+                visibility 1.1s;
+        }
+
+        .hidden-screen {
+            opacity: 0;
+            transform: translateY(-25px) scale(0.98);
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .visible-screen {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Animasi Slide-Up Bertahap */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Kursor Mesin Tik */
+        .typewriter-cursor::after {
+            content: '|';
+            display: inline-block;
+            margin-left: 2px;
+            color: #D88C9A;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Animasi Asap Lilin saat ditiup */
+        @keyframes smokeRise {
+            0% {
+                opacity: 0.8;
+                transform: translateY(0) scale(0.8);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-35px) scale(2.2);
+            }
+        }
+
+        .smoke-puff {
+            animation: smokeRise 2s ease-out forwards;
+        }
+
+        /* Custom Scrollbar untuk kotak pesan panjang */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(253, 248, 245, 0.4);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(216, 140, 154, 0.5);
+            border-radius: 999px;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased selection:bg-dusty/30 selection:text-roseDeep relative">
+
+    <!-- HTML5 Canvas untuk Partikel Kelopak Bunga, Kelip Cahaya, & Konfeti -->
+    <canvas id="particle-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+    <!-- Kontrol Floating Pojok Kanan Atas: Musik & Kustomisasi -->
+    <div class="fixed top-4 right-4 sm:top-6 sm:right-6 z-40 flex items-center gap-2.5">
+        <!-- Tombol Musik Kotak Musik -->
+        <button id="music-toggle-btn" onclick="toggleMusic()" aria-label="Putar atau Jeda Musik"
+            class="glass-card px-3.5 py-2.5 rounded-full flex items-center gap-2 text-roseDeep hover:bg-white/85 active:scale-95 transition-all duration-300 shadow-sm group">
+            <span id="music-icon" class="relative flex h-5 w-5 items-center justify-center">
+                <!-- Icon Play / Pause dinamis via JS -->
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+            </span>
+            <span id="music-label" class="text-xs font-medium tracking-wide hidden sm:inline">Putar Melodi</span>
+        </button>
+
+        <!-- Tombol Buka Panel Kustomisasi -->
+        <button onclick="openCustomModal()" aria-label="Edit Ucapan"
+            class="glass-card p-2.5 rounded-full text-roseDeep hover:bg-white/85 hover:rotate-45 active:scale-95 transition-all duration-300 shadow-sm"
+            title="Ubah Nama & Pesan">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 1. HALAMAN PEMBUKA (SPLASH SCREEN)                                    -->
+    <!-- ===================================================================== -->
+    <section id="splash-screen"
+        class="fixed inset-0 z-30 flex flex-col items-center justify-center px-6 text-center page-transition visible-screen">
+        <div class="max-w-md w-full glass-card rounded-3xl p-8 sm:p-11 relative overflow-hidden animate-float">
+            <!-- Dekorasi Sudut Halus -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-dusty/20 rounded-full blur-2xl pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-10 -left-10 w-32 h-32 bg-goldSoft/20 rounded-full blur-2xl pointer-events-none">
+            </div>
+
+            <!-- Ikon Amplop / Hati Berkilau -->
+            <div
+                class="mx-auto mb-6 w-16 h-16 rounded-2xl bg-gradient-to-br from-dusty to-roseDeep flex items-center justify-center text-white shadow-lg shadow-dusty/30">
+                <svg class="w-8 h-8 animate-pulse-slow" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+            </div>
+
+            <p class="text-xs uppercase tracking-[0.25em] text-roseDeep/80 font-medium mb-2">Sebuah Hari Istimewa</p>
+            <h1 class="font-serif text-3xl sm:text-4xl font-semibold text-ink leading-tight mb-3">
+                Untuk <span id="splash-recipient-name" class="italic text-roseDeep">Sayangku</span>
+            </h1>
+            <p class="text-sm sm:text-base text-ink/75 font-light leading-relaxed mb-8">
+                Ada sepucuk doa kecil dan kehangatan yang kusimpan khusus untuk merayakan bertambahnya usiamu hari ini.
+            </p>
+
+            <!-- Tombol Buka Kejutan -->
+            <button onclick="startSurprise()"
+                class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-dusty to-roseDeep text-white font-medium text-sm sm:text-base tracking-wide shadow-lg shadow-roseDeep/25 hover:shadow-xl hover:shadow-roseDeep/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2.5 mx-auto cursor-pointer">
+                <span>Buka Kejutan</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 2. HALAMAN UTAMA KARTU UCAPAN ROMANTIS                                -->
+    <!-- ===================================================================== -->
+    <main id="main-screen"
+        class="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-16 sm:py-20 page-transition hidden-screen">
+
+        <div class="max-w-xl w-full glass-card rounded-[2rem] p-6 sm:p-10 md:p-12 relative overflow-hidden">
+
+            <!-- Cahaya Latar Belakang Lembut di dalam Kartu -->
+            <div
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-peach/40 rounded-full blur-3xl -z-10 pointer-events-none">
+            </div>
+
+            <!-- Header Ucapan -->
+            <header class="text-center mb-7 reveal-item" id="reveal-1">
+                <span
+                    class="inline-block px-3.5 py-1 rounded-full bg-roseDeep/10 text-roseDeep text-xs font-medium tracking-widest uppercase mb-3">
+                    Selamat Ulang Tahun
+                </span>
+                <h2 class="font-serif text-3xl sm:text-5xl font-semibold text-ink leading-tight">
+                    Selamat Bertambah Usia,<br>
+                    <span id="main-recipient-name" class="italic text-roseDeep">Cintaku</span>
+                </h2>
+            </header>
+
+            <!-- Divider Estetik -->
+            <div class="flex items-center justify-center gap-3 my-6 reveal-item" id="reveal-2">
+                <span class="h-[1px] w-12 bg-gradient-to-r from-transparent to-dusty/60"></span>
+                <svg class="w-4 h-4 text-dusty" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+                <span class="h-[1px] w-12 bg-gradient-to-l from-transparent to-dusty/60"></span>
+            </div>
+
+            <!-- Area Pesan Efek Mesin Tik (Typewriter) -->
+            <div class="bg-white/45 rounded-2xl p-5 sm:p-7 border border-white/70 shadow-inner mb-8 min-h-[170px] flex flex-col justify-between reveal-item"
+                id="reveal-3">
+                <p id="typewriter-text"
+                    class="font-serif text-lg sm:text-xl text-ink/90 leading-relaxed whitespace-pre-line typewriter-cursor">
+                </p>
+
+                <!-- Tanda Tangan Pengirim (Muncul setelah selesai mengetik) -->
+                <div id="sender-signature"
+                    class="mt-6 pt-4 border-t border-dusty/20 text-right opacity-0 transition-opacity duration-1000">
+                    <p class="text-xs text-ink/60 italic">Dengan segenap cinta,</p>
+                    <p id="main-sender-name" class="font-serif text-xl font-semibold text-roseDeep mt-0.5">Seseorang
+                        yang selalu menyayangimu</p>
+                </div>
+            </div>
+
+            <!-- Bagian Interaktif: Kue Ulang Tahun & Tiup Lilin Virtual / Pesan Rahasia -->
+            <div class="text-center reveal-item" id="reveal-4">
+
+                <!-- Ilustrasi Kue Ulang Tahun SVG Interaktif -->
+                <div class="relative mx-auto w-36 h-36 mb-3 flex items-center justify-center cursor-pointer group"
+                    onclick="blowCandle()" title="Klik untuk meniup lilin">
+                    <svg viewBox="0 0 160 160"
+                        class="w-full h-full drop-shadow-md transition-transform duration-500 group-hover:scale-105">
+                        <!-- Piring Kue -->
+                        <ellipse cx="80" cy="138" rx="64" ry="10" fill="#FFFFFF" opacity="0.9" />
+                        <ellipse cx="80" cy="136" rx="58" ry="7" fill="#FADCD9" />
+
+                        <!-- Lapisan Kue Bawah -->
+                        <rect x="34" y="102" width="92" height="32" rx="10" fill="#E8A5B0" />
+                        <!-- Krim Leleh Bawah -->
+                        <path
+                            d="M34 108 Q45 118 56 108 Q68 118 80 108 Q92 118 104 108 Q115 118 126 108 L126 102 Q126 96 116 96 L44 96 Q34 96 34 102 Z"
+                            fill="#FFFDFB" />
+
+                        <!-- Lapisan Kue Atas -->
+                        <rect x="46" y="72" width="68" height="28" rx="8" fill="#D88C9A" />
+                        <!-- Krim Leleh Atas -->
+                        <path
+                            d="M46 78 Q55 87 64 78 Q72 87 80 78 Q88 87 96 78 Q105 87 114 78 L114 72 Q114 66 106 66 L54 66 Q46 66 46 72 Z"
+                            fill="#FFFDFB" />
+
+                        <!-- Hiasan Buah / Mutiara Kecil -->
+                        <circle cx="58" cy="96" r="3" fill="#D4A373" />
+                        <circle cx="80" cy="96" r="3" fill="#D4A373" />
+                        <circle cx="102" cy="96" r="3" fill="#D4A373" />
+
+                        <!-- Batang Lilin -->
+                        <rect x="76" y="42" width="8" height="25" rx="3" fill="#FDF8F5" stroke="#D4A373"
+                            stroke-width="1" />
+                        <path d="M76 48 L84 52 M76 55 L84 59" stroke="#D88C9A" stroke-width="1.5" />
+
+                        <!-- Sumbu Lilin -->
+                        <line x1="80" y1="38" x2="80" y2="42" stroke="#4A353B" stroke-width="1.5"
+                            stroke-linecap="round" />
+
+                        <!-- Api Lilin (Akan padam saat ditiup) -->
+                        <g id="candle-flame" class="origin-[80px_36px] animate-flicker transition-opacity duration-500">
+                            <!-- Cahaya Halo Api -->
+                            <circle cx="80" cy="28" r="14" fill="#FDE68A" opacity="0.35" />
+                            <!-- Api Luar -->
+                            <path d="M80 14 C87 24 88 33 80 37 C72 33 73 24 80 14 Z" fill="#F59E0B" />
+                            <!-- Api Dalam -->
+                            <path d="M80 20 C84 26 84 32 80 35 C76 32 76 26 80 20 Z" fill="#FEF3C7" />
+                        </g>
+
+                        <!-- Asap saat lilin padam -->
+                        <g id="candle-smoke" class="opacity-0">
+                            <circle cx="80" cy="34" r="3" fill="#A8A29E" />
+                            <circle cx="83" cy="28" r="4" fill="#D6D3D1" />
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Tombol Aksi Interaktif -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-2">
+                    <button id="blow-candle-btn" onclick="blowCandle()"
+                        class="w-full sm:w-auto px-6 py-3 rounded-full bg-gradient-to-r from-dusty to-roseDeep text-white text-sm font-medium shadow-md shadow-roseDeep/20 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                        <span>✨ Tiup Lilin & Buat Permohonan</span>
+                    </button>
+
+                    <button id="secret-note-btn" onclick="toggleSecretNote()"
+                        class="w-full sm:w-auto px-6 py-3 rounded-full bg-white/75 hover:bg-white text-roseDeep border border-dusty/30 text-sm font-medium shadow-sm hover:shadow transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                        <span>💌 Buka Pesan Rahasia</span>
+                    </button>
+                </div>
+
+                <!-- Kotak Pesan Rahasia / Doa Setelah Tiup Lilin (Tersembunyi Awalnya) -->
+                <div id="secret-message-box"
+                    class="max-h-0 overflow-hidden opacity-0 transition-all duration-700 ease-in-out">
+                    <div
+                        class="mt-6 p-5 rounded-2xl bg-gradient-to-br from-peach/50 to-white/80 border border-dusty/30 text-center">
+                        <p id="wish-status-badge"
+                            class="text-xs font-semibold uppercase tracking-widest text-roseDeep mb-1.5">
+                            Catatan Kecil Untukmu
+                        </p>
+                        <p id="secret-note-content"
+                            class="font-serif italic text-base sm:text-lg text-ink leading-relaxed">
+                            "Semoga setiap langkahmu selalu dilindungi semesta, setiap lelahmu dibalas kebahagiaan, dan
+                            semoga aku selalu diberi kesempatan untuk merayakan ulang tahunmu di tahun-tahun
+                            berikutnya."
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer Halus -->
+        <footer class="mt-8 text-center text-xs text-ink/50 font-light">
+            Dibuat khusus dengan sepenuh hati • Ketuk ikon pengaturan di pojok atas untuk menyesuaikan pesan
+        </footer>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- 3. PANEL KUSTOMISASI (MODAL EDIT NAMA & PESAN)                        -->
+    <!-- ===================================================================== -->
+    <div id="custom-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-cream border border-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl transform scale-95 transition-transform duration-300"
+            id="custom-modal-card">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h3 class="font-serif text-2xl font-semibold text-ink">Sesuaikan Ucapan</h3>
+                    <p class="text-xs text-ink/60">Ubah detail agar terasa lebih personal untuknya</p>
+                </div>
+                <button onclick="closeCustomModal()"
+                    class="p-2 rounded-full hover:bg-dusty/15 text-ink/70 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form id="custom-form" onsubmit="saveCustomization(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-ink/80 mb-1">Nama Panggilan Pasangan</label>
+                    <input type="text" id="input-recipient" required placeholder="Contoh: Sayangku, Nisa, atau Cintaku"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white border border-dusty/30 text-sm text-ink focus:outline-none focus:border-roseDeep transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-ink/80 mb-1">Isi Pesan Ulang Tahun</label>
+                    <textarea id="input-message" rows="4" required placeholder="Tulis pesan romantis di sini..."
+                        class="w-full px-4 py-2.5 rounded-xl bg-white border border-dusty/30 text-sm text-ink focus:outline-none focus:border-roseDeep transition-colors leading-relaxed"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-ink/80 mb-1">Pesan Rahasia (Saat Kartu Rahasia
+                        Dibuka)</label>
+                    <textarea id="input-secret" rows="2" required placeholder="Tulis doa atau pesan rahasia..."
+                        class="w-full px-4 py-2.5 rounded-xl bg-white border border-dusty/30 text-sm text-ink focus:outline-none focus:border-roseDeep transition-colors"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-ink/80 mb-1">Nama Pengirim (Namamu)</label>
+                    <input type="text" id="input-sender" required
+                        placeholder="Contoh: Mas, Dika, atau Seseorang yang menyayangimu"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white border border-dusty/30 text-sm text-ink focus:outline-none focus:border-roseDeep transition-colors">
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2.5">
+                    <button type="button" onclick="resetDefaultData()"
+                        class="px-4 py-2.5 rounded-full text-xs font-medium text-ink/60 hover:text-roseDeep transition-colors">
+                        Reset Default
+                    </button>
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-full bg-gradient-to-r from-dusty to-roseDeep text-white text-sm font-medium shadow-md hover:shadow-lg transition-all cursor-pointer">
+                        Simpan & Terapkan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifikasi Halus (Pengganti alert) -->
+    <div id="toast-notification"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-ink/90 text-cream text-xs font-medium tracking-wide shadow-lg opacity-0 translate-y-4 pointer-events-none transition-all duration-300">
+        Perubahan berhasil disimpan ✨
+    </div>
+
+    <script>
+        /* =====================================================================
+           1. DATA & STATE KUSTOMISASI
+           ===================================================================== */
+        const defaultData = {
+            recipient: "Sayangku",
+            message: "Terima kasih telah hadir dan menjadi bagian terindah dalam setiap hari-hariku. Di usiamu yang baru ini, aku tidak hanya merayakan hari lahirmu, tapi juga bersyukur atas setiap tawa, cerita, dan kehangatan yang kamu bawa ke dalam hidupku.\n\nTetaplah menjadi pribadi yang lembut, kuat, dan penuh cahaya. Selamat ulang tahun, semestaku.",
+            secret: "Semoga setiap langkahmu selalu dilindungi semesta, setiap lelahmu dibalas kebahagiaan, dan semoga aku selalu diberi kesempatan untuk menggenggam tanganmu di tahun-tahun berikutnya.",
+            sender: "Seseorang yang selalu menyayangimu"
+        };
+
+        let appData = {...defaultData};
+        let isMainOpened = false;
+        let typewriterTimer = null;
+        let candleBlown = false;
+
+        // Muat data dari localStorage jika pengguna pernah mengeditnya
+        function loadSavedData() {
+            try {
+                const saved = localStorage.getItem('romantic_bday_data');
+                if (saved) {
+                    appData = {...defaultData, ...JSON.parse(saved)};
+                }
+            } catch (e) {
+                console.warn("Gagal memuat penyimpanan lokal:", e);
+            }
+            applyDataToUI();
+        }
+
+        function applyDataToUI() {
+            document.getElementById('splash-recipient-name').textContent = appData.recipient;
+            document.getElementById('main-recipient-name').textContent = appData.recipient;
+            document.getElementById('main-sender-name').textContent = appData.sender;
+            document.getElementById('secret-note-content').textContent = `"${appData.secret}"`;
+
+            // Isi form modal
+            document.getElementById('input-recipient').value = appData.recipient;
+            document.getElementById('input-message').value = appData.message;
+            document.getElementById('input-secret').value = appData.secret;
+            document.getElementById('input-sender').value = appData.sender;
+        }
+
+        /* =====================================================================
+           2. WEB AUDIO API: MUSIK KOTAK MUSIK (MUSIC BOX MELODY) ROMANTIS
+           ===================================================================== */
+        let audioCtx = null;
+        let isPlayingMusic = false;
+        let melodyInterval = null;
+        let noteIndex = 0;
+
+        // Melodi lembut "Happy Birthday" + variasi aransemen kotak musik romantis (Frekuensi Hz)
+        // Nada C Major / F Major hangat
+        const musicBoxNotes = [
+            // Baris 1: Ha-ppy Birth-day to you
+            {freq: 261.63, dur: 0.45}, // C4
+            {freq: 261.63, dur: 0.35}, // C4
+            {freq: 293.66, dur: 0.80}, // D4
+            {freq: 261.63, dur: 0.80}, // C4
+            {freq: 349.23, dur: 0.80}, // F4
+            {freq: 329.63, dur: 1.40}, // E4
+            {freq: 0, dur: 0.30}, // Jeda napas
+
+            // Baris 2: Ha-ppy Birth-day to you
+            {freq: 261.63, dur: 0.45}, // C4
+            {freq: 261.63, dur: 0.35}, // C4
+            {freq: 293.66, dur: 0.80}, // D4
+            {freq: 261.63, dur: 0.80}, // C4
+            {freq: 392.00, dur: 0.80}, // G4
+            {freq: 349.23, dur: 1.40}, // F4
+            {freq: 0, dur: 0.30},
+
+            // Baris 3: Ha-ppy Birth-day dear love...
+            {freq: 261.63, dur: 0.45}, // C4
+            {freq: 261.63, dur: 0.35}, // C4
+            {freq: 523.25, dur: 0.85}, // C5 (Nada tinggi menyentuh)
+            {freq: 440.00, dur: 0.80}, // A4
+            {freq: 349.23, dur: 0.75}, // F4
+            {freq: 329.63, dur: 0.75}, // E4
+            {freq: 293.66, dur: 1.45}, // D4
+            {freq: 0, dur: 0.35},
+
+            // Baris 4: Ha-ppy Birth-day to you
+            {freq: 466.16, dur: 0.45}, // Bb4
+            {freq: 466.16, dur: 0.35}, // Bb4
+            {freq: 440.00, dur: 0.80}, // A4
+            {freq: 349.23, dur: 0.80}, // F4
+            {freq: 392.00, dur: 0.85}, // G4
+            {freq: 349.23, dur: 1.80}, // F4 (Penutup lembut)
+            {freq: 0, dur: 0.90}
+        ];
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Sintesis suara dentingan kotak musik (bell/celesta lembut)
+        function playMusicBoxTone(freq, duration) {
+            if (!audioCtx || freq === 0) return;
+
+            const now = audioCtx.currentTime;
+
+            // Osilator utama (Sine murni untuk kehangatan)
+            const osc1 = audioCtx.createOscillator();
+            // Osilator harmonik oktaf atas (Triangle lembut untuk kilau kotak musik)
+            const osc2 = audioCtx.createOscillator();
+
+            const gainNode = audioCtx.createGain();
+            const harmonicGain = audioCtx.createGain();
+
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(freq, now);
+
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(freq * 2, now); // 1 oktaf lebih tinggi
+
+            // Envelope ADSR khas dentingan kotak musik (attack cepat, decay panjang halus)
+            gainNode.gain.setValueAtTime(0.0001, now);
+            gainNode.gain.linearRampToValueAtTime(0.14, now + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.0008, now + duration + 1.4);
+
+            harmonicGain.gain.setValueAtTime(0.0001, now);
+            harmonicGain.gain.linearRampToValueAtTime(0.025, now + 0.015);
+            harmonicGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+
+            osc1.connect(gainNode);
+            osc2.connect(harmonicGain);
+            harmonicGain.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + duration + 1.5);
+            osc2.stop(now + 0.5);
+        }
+
+        function scheduleNextNote() {
+            if (!isPlayingMusic) return;
+            const currentNote = musicBoxNotes[noteIndex];
+            playMusicBoxTone(currentNote.freq, currentNote.dur);
+
+            noteIndex = (noteIndex + 1) % musicBoxNotes.length;
+            melodyInterval = setTimeout(scheduleNextNote, currentNote.dur * 1000);
+        }
+
+        function startMusic() {
+            try {
+                initAudioContext();
+                if (isPlayingMusic) return;
+                isPlayingMusic = true;
+                updateMusicButtonUI(true);
+                scheduleNextNote();
+            } catch (err) {
+                console.warn("Audio tidak dapat diputar otomatis:", err);
+            }
+        }
+
+        function stopMusic() {
+            isPlayingMusic = false;
+            clearTimeout(melodyInterval);
+            updateMusicButtonUI(false);
+        }
+
+        function toggleMusic() {
+            if (isPlayingMusic) {
+                stopMusic();
+            } else {
+                startMusic();
+            }
+        }
+
+        function updateMusicButtonUI(playing) {
+            const iconContainer = document.getElementById('music-icon');
+            const label = document.getElementById('music-label');
+            if (playing) {
+                iconContainer.innerHTML = `<svg class="w-4 h-4 fill-current animate-pulse" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+                label.textContent = "Jeda Melodi";
+            } else {
+                iconContainer.innerHTML = `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+                label.textContent = "Putar Melodi";
+            }
+        }
+
+        /* =====================================================================
+           3. TRANSISI SPLASH SCREEN & EFEK MESIN TIK (TYPEWRITER)
+           ===================================================================== */
+        function startSurprise() {
+            const splash = document.getElementById('splash-screen');
+            const main = document.getElementById('main-screen');
+
+            // Mulai putar melodi kotak musik lembut saat tombol diklik
+            startMusic();
+
+            // Transisi keluar splash screen
+            splash.classList.remove('visible-screen');
+            splash.classList.add('hidden-screen');
+
+            // Munculkan halaman utama dengan efek slide-up bertahap
+            setTimeout(() => {
+                main.classList.remove('hidden-screen');
+                main.classList.add('visible-screen');
+                isMainOpened = true;
+
+                // Animasi bertahap untuk setiap elemen kartu
+                const items = ['reveal-1', 'reveal-2', 'reveal-3', 'reveal-4'];
+                items.forEach((id, idx) => {
+                    setTimeout(() => {
+                        document.getElementById(id).classList.add('active');
+                    }, idx * 280);
+                });
+
+                // Mulai efek mesin tik setelah kartu muncul
+                setTimeout(() => {
+                    startTypewriter(appData.message);
+                }, 950);
+
+            }, 550);
+        }
+
+        function startTypewriter(text) {
+            clearTimeout(typewriterTimer);
+            const target = document.getElementById('typewriter-text');
+            const signature = document.getElementById('sender-signature');
+
+            target.textContent = "";
+            target.classList.add('typewriter-cursor');
+            signature.classList.remove('opacity-100');
+            signature.classList.add('opacity-0');
+
+            let i = 0;
+            function typeChar() {
+                if (i < text.length) {
+                    const char = text.charAt(i);
+                    target.textContent += char;
+                    i++;
+
+                    // Kecepatan mengetik alami (sedikit jeda pada tanda baca)
+                    let delay = 38;
+                    if (char === '.' || char === '!' || char === '?') delay = 320;
+                    else if (char === ',') delay = 160;
+                    else if (char === '\n') delay = 260;
+
+                    typewriterTimer = setTimeout(typeChar, delay);
+                } else {
+                    // Selesai mengetik: hilangkan kursor & munculkan tanda tangan
+                    target.classList.remove('typewriter-cursor');
+                    signature.classList.remove('opacity-0');
+                    signature.classList.add('opacity-100');
+                }
+            }
+            typeChar();
+        }
+
+        /* =====================================================================
+           4. INTERAKSI TIUP LILIN VIRTUAL & PESAN RAHASIA
+           ===================================================================== */
+        function blowCandle() {
+            const flame = document.getElementById('candle-flame');
+            const smoke = document.getElementById('candle-smoke');
+            const btn = document.getElementById('blow-candle-btn');
+            const wishBadge = document.getElementById('wish-status-badge');
+
+            if (!candleBlown) {
+                candleBlown = true;
+                // Padamkan api lilin
+                flame.style.opacity = '0';
+
+                // Munculkan efek asap naik
+                smoke.style.opacity = '1';
+                smoke.classList.add('smoke-puff');
+
+                // Ubah tombol
+                btn.innerHTML = `<span>🎉 Permohonan Terkirim ke Semesta</span>`;
+                btn.classList.remove('from-dusty', 'to-roseDeep');
+                btn.classList.add('bg-goldSoft', 'text-white');
+
+                // Luncurkan konfeti lembut dari tengah layar
+                triggerConfettiBurst();
+
+                // Buka kotak pesan rahasia otomatis dengan label permohonan
+                wishBadge.textContent = "✨ Lilin Telah Ditiup • Doa Terbaik Untukmu";
+                openSecretNote();
+                showToast("Selamat ulang tahun! Semoga semua harapanmu terwujud 🎂✨");
+            } else {
+                // Jika diklik lagi, luncurkan konfeti tambahan
+                triggerConfettiBurst();
+            }
+        }
+
+        function toggleSecretNote() {
+            const box = document.getElementById('secret-message-box');
+            const isOpen = box.style.maxHeight && box.style.maxHeight !== '0px';
+            if (isOpen) {
+                box.style.maxHeight = '0px';
+                box.style.opacity = '0';
+            } else {
+                openSecretNote();
+            }
+        }
+
+        function openSecretNote() {
+            const box = document.getElementById('secret-message-box');
+            box.style.maxHeight = '260px';
+            box.style.opacity = '1';
+        }
+
+        /* =====================================================================
+           5. PANEL KUSTOMISASI (MODAL)
+           ===================================================================== */
+        function openCustomModal() {
+            const modal = document.getElementById('custom-modal');
+            const card = document.getElementById('custom-modal-card');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+
+        function closeCustomModal() {
+            const modal = document.getElementById('custom-modal');
+            const card = document.getElementById('custom-modal-card');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+
+        function saveCustomization(e) {
+            e.preventDefault();
+            appData.recipient = document.getElementById('input-recipient').value.trim() || defaultData.recipient;
+            appData.message = document.getElementById('input-message').value.trim() || defaultData.message;
+            appData.secret = document.getElementById('input-secret').value.trim() || defaultData.secret;
+            appData.sender = document.getElementById('input-sender').value.trim() || defaultData.sender;
+
+            try {
+                localStorage.setItem('romantic_bday_data', JSON.stringify(appData));
+            } catch (err) {
+                console.warn("Tidak bisa menyimpan ke localStorage:", err);
+            }
+
+            applyDataToUI();
+            closeCustomModal();
+            showToast("Ucapan berhasil diperbarui ✨");
+
+            // Jika sudah berada di halaman utama, ketik ulang pesan barunya
+            if (isMainOpened) {
+                startTypewriter(appData.message);
+            }
+        }
+
+        function resetDefaultData() {
+            appData = {...defaultData};
+            localStorage.removeItem('romantic_bday_data');
+            applyDataToUI();
+            showToast("Dikembalikan ke pesan awal");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-notification');
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+            }, 3000);
+        }
+
+        /* =====================================================================
+           6. HTML5 CANVAS: ANIMASI KELOPAK BUNGA, KELIP CAHAYA & KONFETI LEMBUT
+           ===================================================================== */
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let petals = [];
+        let sparkles = [];
+        let confettis = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Kelas Kelopak Bunga Sakura/Mawar Lembut
+        class Petal {
+            constructor() {
+                this.reset(true);
+            }
+            reset(initial = false) {
+                this.x = Math.random() * width;
+                this.y = initial ? Math.random() * height : -20;
+                this.size = Math.random() * 7 + 5;
+                this.speedY = Math.random() * 0.7 + 0.35;
+                this.speedX = Math.random() * 0.6 - 0.3;
+                this.angle = Math.random() * Math.PI * 2;
+                this.spin = (Math.random() - 0.5) * 0.02;
+                this.swayOffset = Math.random() * 100;
+                const colors = ['rgba(216, 140, 154, 0.38)', 'rgba(250, 220, 217, 0.65)', 'rgba(242, 181, 193, 0.45)'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update(time) {
+                this.y += this.speedY;
+                this.x += Math.sin(time * 0.001 + this.swayOffset) * 0.45 + this.speedX;
+                this.angle += this.spin;
+
+                if (this.y > height + 20 || this.x < -30 || this.x > width + 30) {
+                    this.reset(false);
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                // Bentuk kelopak hati/oval lembut
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(this.size / 2, -this.size / 2, this.size, this.size / 3, 0, this.size);
+                ctx.bezierCurveTo(-this.size, this.size / 3, -this.size / 2, -this.size / 2, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Kelas Kelip Cahaya Hangat (Floating Bokeh Sparkles)
+        class Sparkle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.radius = Math.random() * 2.5 + 0.8;
+                this.speedY = -(Math.random() * 0.25 + 0.1);
+                this.alphaPhase = Math.random() * Math.PI * 2;
+            }
+            update(time) {
+                this.y += this.speedY;
+                if (this.y < -10) {
+                    this.y = height + 10;
+                    this.x = Math.random() * width;
+                }
+                this.alpha = 0.25 + 0.45 * Math.sin(time * 0.002 + this.alphaPhase);
+            }
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 248, 235, ${this.alpha})`;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = 'rgba(212, 163, 115, 0.6)';
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Kelas Konfeti Lembut saat Tiup Lilin
+        class Confetti {
+            constructor(originX, originY) {
+                this.x = originX;
+                this.y = originY;
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 7 + 3;
+                this.vx = Math.cos(angle) * velocity;
+                this.vy = Math.sin(angle) * velocity - 3;
+                this.gravity = 0.14;
+                this.drag = 0.97;
+                this.size = Math.random() * 7 + 4;
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.5) * 8;
+                this.opacity = 1;
+                const palette = ['#D88C9A', '#D4A373', '#FADCD9', '#A65E6E', '#FDE68A', '#FFFFFF'];
+                this.color = palette[Math.floor(Math.random() * palette.length)];
+            }
+            update() {
+                this.vx *= this.drag;
+                this.vy = this.vy * this.drag + this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.rotation += this.rotSpeed;
+                this.opacity -= 0.008;
+            }
+            draw() {
+                if (this.opacity <= 0) return;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = Math.max(0, this.opacity);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 4, this.size, this.size / 2);
+                ctx.restore();
+            }
+        }
+
+        function triggerConfettiBurst() {
+            const centerX = width / 2;
+            const centerY = height * 0.55;
+            for (let i = 0; i < 85; i++) {
+                confettis.push(new Confetti(centerX, centerY));
+            }
+        }
+
+        function initParticles() {
+            resizeCanvas();
+            petals = [];
+            sparkles = [];
+            const petalCount = width < 640 ? 18 : 30;
+            const sparkleCount = width < 640 ? 22 : 40;
+
+            for (let i = 0; i < petalCount; i++) petals.push(new Petal());
+            for (let i = 0; i < sparkleCount; i++) sparkles.push(new Sparkle());
+        }
+
+        function animateCanvas(time) {
+            ctx.clearRect(0, 0, width, height);
+
+            sparkles.forEach(s => {
+                s.update(time);
+                s.draw();
+            });
+
+            petals.forEach(p => {
+                p.update(time);
+                p.draw();
+            });
+
+            for (let i = confettis.length - 1; i >= 0; i--) {
+                confettis[i].update();
+                confettis[i].draw();
+                if (confettis[i].opacity <= 0) {
+                    confettis.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animateCanvas);
+        }
+
+        // Inisialisasi saat halaman selesai dimuat
+        window.onload = function () {
+            loadSavedData();
+            initParticles();
+            requestAnimationFrame(animateCanvas);
+        };
+    </script>
+</body>
+
+</html>
